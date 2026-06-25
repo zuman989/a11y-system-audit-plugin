@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    margin: 0;
+    padding: 12px;
+    font-size: 12px;
+    color: #1a1a1a;
+  }
+  button.primary {
+    background: #185FA5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+  }
+  button.primary:hover { background: #0C447C; }
+  button.primary:disabled { background: #b4b2a9; cursor: default; }
+
+  button.secondary {
+    background: white;
+    color: #185FA5;
+    border: 1px solid #185FA5;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+  }
+  button.secondary:hover { background: #E6F1FB; }
+  button.secondary:disabled { border-color: #b4b2a9; color: #b4b2a9; cursor: default; background: white; }
+
+  details.settings {
+    border: 1px solid #e5e3dc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+  }
+  details.settings summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: #5F5E5A;
+    font-size: 11px;
+  }
+  .settings-body { margin-top: 8px; }
+  .settings-body label {
+    display: block;
+    font-size: 11px;
+    color: #5F5E5A;
+    margin-bottom: 4px;
+  }
+  .settings-body input[type="password"], .settings-body input[type="text"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #d3d1c7;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .key-status {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .key-status.saved { color: #1a7a4a; }
+  .key-status.unsaved { color: #888780; }
+
+  .summary {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .count {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 6px;
+    background: #f3f2ee;
+  }
+  .count .num {
+    font-size: 18px;
+    font-weight: 600;
+    display: block;
+    line-height: 1.2;
+  }
+  .count.high .num { color: #A32D2D; }
+  .count.medium .num { color: #946600; }
+  .count.low .num { color: #5F5E5A; }
+
+  .issue {
+    border: 1px solid #e5e3dc;
+    border-radius: 6px;
+    padding: 9px 11px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.1s;
+  }
+  .issue:hover { border-color: #185FA5; }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    display: inline-block;
+    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+  }
+  .badge.high { background: #A32D2D; }
+  .badge.medium { background: #946600; }
+  .badge.low { background: #5F5E5A; }
+  .badge.ai { background: #185FA5; }
+
+  .component-name {
+    font-size: 10px;
+    color: #888780;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+  .msg {
+    font-weight: 600;
+    margin: 3px 0 4px;
+    line-height: 1.35;
+  }
+  .detail {
+    color: #5F5E5A;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .stakeholder-text {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e5e3dc;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .stakeholder-text .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #185FA5;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .fix-text {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #1a7a4a;
+    line-height: 1.4;
+  }
+  .fix-text .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #1a7a4a;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  #empty {
+    text-align: center;
+    color: #888780;
+    padding: 50px 10px;
+    line-height: 1.5;
+  }
+  .ai-error {
+    color: #A32D2D;
+    font-size: 11px;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+  .section-divider {
+    margin: 14px 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #5F5E5A;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body>
+
+  <details class="settings">
+    <summary>Settings — Groq API key (free)</summary>
+    <div class="settings-body">
+      <label for="api-key-input">API key (stored locally, used only when you click "Generate stakeholder explanations"). Get a free key at console.groq.com — no credit card required.</label>
+      <input type="password" id="api-key-input" placeholder="gsk_..." />
+      <button class="secondary" id="save-key-btn" style="margin-top:0;">Save key</button>
+      <div class="key-status unsaved" id="key-status">No key saved yet.</div>
+    </div>
+  </details>
+
+  <button class="primary" id="run">Run audit</button>
+
+  <div class="summary" id="summary" style="display:none;">
+    <div class="count high"><span class="num" id="high-count">0</span>High</div>
+    <div class="count medium"><span class="num" id="medium-count">0</span>Medium</div>
+    <div class="count low"><span class="num" id="low-count">0</span>Low</div>
+  </div>
+
+  <div id="ai-controls" style="display:none;">
+    <button class="secondary" id="generate-ai-btn">Generate stakeholder explanations</button>
+    <button class="secondary" id="export-btn">Export remediation plan (.md)</button>
+    <div class="ai-error" id="ai-error" style="display:none;"></div>
+  </div>
+
+  <div id="results"></div>
+  <div id="empty">Click "Run audit" to scan every component in this file for accessibility issues.</div>
+
+<script>
+  const runBtn = document.getElementById('run');
+  const resultsEl = document.getElementById('results');
+  const emptyEl = document.getElementById('empty');
+  const summaryEl = document.getElementById('summary');
+  const aiControls = document.getElementById('ai-controls');
+  const generateAiBtn = document.getElementById('generate-ai-btn');
+  const exportBtn = document.getElementById('export-btn');
+  const aiErrorEl = document.getElementById('ai-error');
+
+  const apiKeyInput = document.getElementById('api-key-input');
+  const saveKeyBtn = document.getElementById('save-key-btn');
+  const keyStatusEl = document.getElementById('key-status');
+
+  let currentIssues = [];
+  let aiExplanations = null; // map of issueId -> { stakeholder, fix }
+
+  // ============================================================
+  // PASTE YOUR GROQ API KEY BETWEEN THE QUOTES BELOW.
+  // Get a free key at https://console.groq.com (no credit card).
+  // Example: let apiKey = 'gsk_abc123yourrealkeyhere';
+  // ============================================================
+  let apiKey = '';
+  // ============================================================
+
+  // ---------- Settings: API key ----------
+
+  saveKeyBtn.onclick = () => {
+    apiKey = apiKeyInput.value.trim();
+    parent.postMessage({ pluginMessage: { type: 'save-api-key', key: apiKey } }, '*');
+    updateKeyStatus();
+  };
+
+  function updateKeyStatus() {
+    if (apiKey) {
+      keyStatusEl.textContent = 'Key saved for this file.';
+      keyStatusEl.className = 'key-status saved';
+    } else {
+      keyStatusEl.textContent = 'No key saved yet.';
+      keyStatusEl.className = 'key-status unsaved';
+    }
+  }
+
+  // ---------- Run audit ----------
+
+  runBtn.onclick = () => {
+    runBtn.disabled = true;
+    runBtn.textContent = 'Scanning...';
+    parent.postMessage({ pluginMessage: { type: 'run-audit' } }, '*');
+  };
+
+  window.onmessage = (event) => {
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+
+    if (msg.type === 'stored-api-key') {
+      if (msg.key) {
+        apiKey = msg.key;
+        apiKeyInput.value = apiKey;
+      }
+      updateKeyStatus();
+    }
+
+    if (msg.type === 'audit-results') {
+      runBtn.disabled = false;
+      runBtn.textContent = 'Run audit again';
+      currentIssues = msg.issues;
+      aiExplanations = null;
+      renderIssues(currentIssues);
+    }
+  };
+
+  function renderIssues(issues) {
+    resultsEl.innerHTML = '';
+    aiErrorEl.style.display = 'none';
+
+    if (issues.length === 0) {
+      emptyEl.style.display = 'block';
+      emptyEl.textContent = 'No issues found.';
+      summaryEl.style.display = 'none';
+      aiControls.style.display = 'none';
+      return;
+    }
+
+    emptyEl.style.display = 'none';
+    summaryEl.style.display = 'flex';
+    aiControls.style.display = 'block';
+
+    const counts = { high: 0, medium: 0, low: 0 };
+    issues.forEach(i => counts[i.severity]++);
+    document.getElementById('high-count').textContent = counts.high;
+    document.getElementById('medium-count').textContent = counts.medium;
+    document.getElementById('low-count').textContent = counts.low;
+
+    const order = { high: 0, medium: 1, low: 2 };
+    issues.sort((a, b) => order[a.severity] - order[b.severity]);
+
+    issues.forEach(issue => {
+      const el = document.createElement('div');
+      el.className = 'issue';
+      el.dataset.issueId = issue.id;
+
+      let html =
+        '<span class="badge ' + issue.severity + '">' + issue.severity.toUpperCase() + '</span>' +
+        '<span class="component-name">' + escapeHtml(issue.componentName) + '</span>' +
+        '<div class="msg">' + escapeHtml(issue.message) + '</div>' +
+        '<div class="detail">' + escapeHtml(issue.detail) + '</div>';
+
+      if (aiExplanations && aiExplanations[issue.id]) {
+        const ai = aiExplanations[issue.id];
+        if (ai.stakeholder) {
+          html += '<div class="stakeholder-text"><span class="label">For a stakeholder</span>' + escapeHtml(ai.stakeholder) + '</div>';
+        }
+        if (ai.fix) {
+          html += '<div class="fix-text"><span class="label">Suggested fix</span>' + escapeHtml(ai.fix) + '</div>';
+        }
+      }
+
+      el.innerHTML = html;
+      el.onclick = (e) => {
+        parent.postMessage({ pluginMessage: { type: 'select-node', nodeId: issue.nodeId } }, '*');
+      };
+      resultsEl.appendChild(el);
+    });
+  }
+
+  // ---------- AI explanation layer ----------
+  // Sends the already-detected issue list (never the design file itself)
+  // to Claude, asking for plain-language explanations a non-technical
+  // stakeholder could read, plus a one-line suggested fix. The detection
+  // itself never touches the network — only this optional step does.
+
+  generateAiBtn.onclick = async () => {
+    aiErrorEl.style.display = 'none';
+
+    if (!apiKey || apiKey === 'PASTE_YOUR_GROQ_KEY_HERE') {
+      aiErrorEl.textContent = 'No Groq API key set. Either paste it directly into ui.html (look for PASTE_YOUR_GROQ_KEY_HERE near the top of the script) or use Settings above.';
+      aiErrorEl.style.display = 'block';
+      return;
+    }
+
+    generateAiBtn.disabled = true;
+    generateAiBtn.textContent = 'Generating...';
+
+    try {
+      const issuesForPrompt = currentIssues.map(i => ({
+        id: i.id,
+        message: i.message,
+        detail: i.detail,
+        category: i.category,
+        severity: i.severity
+      }));
+
+      const prompt =
+        'You are helping a product design team communicate accessibility issues found by an automated audit. ' +
+        'For EACH issue below, write: (1) a 1-2 sentence plain-language explanation a non-technical stakeholder ' +
+        '(e.g. a product manager or exec) could understand, focused on real user impact and business/legal risk, ' +
+        'and (2) a single-sentence suggested fix. ' +
+        'Respond with ONLY a JSON array, no markdown fences, no preamble, no commentary. ' +
+        'Each array item must be exactly: {"id": "<issue id>", "stakeholder": "<explanation>", "fix": "<suggested fix>"}.\n\n' +
+        'Issues:\n' + JSON.stringify(issuesForPrompt, null, 2);
+
+      // Groq's API is OpenAI-compatible: Bearer auth, and the response
+      // text lives at data.choices[0].message.content (not data.content[0].text
+      // like Anthropic's Messages API). If swapping providers later, this
+      // request/response shape is the only thing that needs to change.
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error('API error (' + response.status + '): ' + errBody.slice(0, 200));
+      }
+
+      const data = await response.json();
+      const rawText = (data.choices && data.choices[0] && data.choices[0].message
+        ? data.choices[0].message.content
+        : ''
+      ).trim();
+
+      const cleaned = rawText.replace(/^```json\s*|^```\s*|```\s*$/g, '').trim();
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseErr) {
+        // Fallback: the model may have added a stray sentence despite
+        // instructions not to. Extract just the [...] array substring.
+        const start = cleaned.indexOf('[');
+        const end = cleaned.lastIndexOf(']');
+        if (start === -1 || end === -1) throw parseErr;
+        parsed = JSON.parse(cleaned.slice(start, end + 1));
+      }
+
+      aiExplanations = {};
+      parsed.forEach(item => {
+        aiExplanations[item.id] = { stakeholder: item.stakeholder, fix: item.fix };
+      });
+
+      renderIssues(currentIssues);
+    } catch (err) {
+      let hint = err.message;
+      if (hint.indexOf('429') !== -1) {
+        hint += ' — this usually means you hit the Groq free-tier rate limit. Wait a minute and try again.';
+      }
+      aiErrorEl.textContent = 'Could not generate explanations: ' + hint;
+      aiErrorEl.style.display = 'block';
+    } finally {
+      generateAiBtn.disabled = false;
+      generateAiBtn.textContent = 'Generate stakeholder explanations';
+    }
+  };
+
+  // ---------- Export remediation plan ----------
+
+  exportBtn.onclick = () => {
+    const lines = [];
+    lines.push('# Accessibility Remediation Plan');
+    lines.push('');
+    lines.push('Generated by A11y System Audit.');
+    lines.push('');
+
+    const order = { high: 0, medium: 1, low: 2 };
+    const sorted = [...currentIssues].sort((a, b) => order[a.severity] - order[b.severity]);
+
+    sorted.forEach((issue, idx) => {
+      lines.push('## ' + (idx + 1) + '. [' + issue.severity.toUpperCase() + '] ' + issue.message);
+      lines.push('');
+      lines.push('**Component:** ' + issue.componentName);
+      lines.push('');
+      lines.push('**Technical detail:** ' + issue.detail);
+      lines.push('');
+      if (aiExplanations && aiExplanations[issue.id]) {
+        const ai = aiExplanations[issue.id];
+        if (ai.stakeholder) {
+          lines.push('**Why it matters:** ' + ai.stakeholder);
+          lines.push('');
+        }
+        if (ai.fix) {
+          lines.push('**Suggested fix:** ' + ai.fix);
+          lines.push('');
+        }
+      }
+      lines.push('---');
+      lines.push('');
+    });
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'remediation-plan.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>

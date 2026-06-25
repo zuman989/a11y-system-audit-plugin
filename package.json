@@ -1,0 +1,13 @@
+{
+  "name": "a11y-system-audit",
+  "version": "1.0.0",
+  "description": "Figma plugin that audits a design system's components for WCAG AA accessibility violations.",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.129.0",
+    "typescript": "^6.0.3"
+  }
+}

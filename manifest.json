@@ -1,0 +1,12 @@
+{
+  "name": "A11y System Audit",
+  "id": "a11y-system-audit-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["https://api.groq.com"],
+    "reasoning": "Used only when the user clicks 'Generate stakeholder explanations' — sends the already-detected issue list to Groq's free-tier API to produce plain-language summaries. The deterministic audit itself never uses the network."
+  }
+}
