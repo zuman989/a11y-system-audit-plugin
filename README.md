@@ -9,7 +9,7 @@ Designers don't have a good way to catch accessibility mistakes before they ship
 | Check | What it catches |
 |---|---|
 | Contrast | Text failing WCAG AA ratios (4.5:1 normal, 3:1 large text) |
-| Focus state | Focus variants that look identical to default — invisible to keyboard users |
+| Focus state | Focus variants that look identical to default, invisible to keyboard users |
 | Font size | Text below 12px |
 | Touch target | Interactive elements under 24x24px (WCAG 2.2) |
 
@@ -36,13 +36,13 @@ For the AI explanation feature, get a free key at console.groq.com and paste it 
 
 Before writing any plugin code, I built a small design system and planted five known issues in it: low-contrast text on a disabled button, a focus state visually identical to default, a placeholder color below threshold, an error message at too small a font size, and a close button below the 24x24px minimum target size.
 
-The plugin caught all five, plus one I hadn't planted — a card text color sitting just under the contrast threshold, which Stark had independently flagged too. Two tools landing on the same edge case was a good sign the math was right.
+The plugin caught all five, plus one I hadn't planted, a card text color sitting just under the contrast threshold, which Stark had independently flagged too. Two tools landing on the same edge case was a good sign the math was right.
 
 View the test design system on Figma: https://www.figma.com/design/oDGILVf2mf4QX9W6WxrIkT/Test-Design-System?node-id=0-1&t=IWcZv5SmxKAgz3n1-1
 
 ## A note on the AI layer
 
-Almost none of this needs AI. Contrast is a formula, sizes are numbers against a threshold. The one place it earns its spot is translation — "1.61:1 contrast ratio" means nothing to a product manager, but "users with low vision won't be able to read this button" does. So there's one button that takes the issues the plugin already found and asks an LLM for a plain-language explanation and a one-line fix per issue. One button, one job, sitting on top of an engine that works without it.
+Almost none of this needs AI. Contrast is a formula, sizes are numbers against a threshold. The one place it earns its spot is translation "1.61:1 contrast ratio" means nothing to a product manager, but "users with low vision won't be able to read this button" does. So there's one button that takes the issues the plugin already found and asks an LLM for a plain-language explanation and a one-line fix per issue. One button, one job, sitting on top of an engine that works without it.
 
 ## Stack
 
