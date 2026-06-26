@@ -13,12 +13,12 @@ Designers don't have a good way to catch accessibility mistakes before they ship
 | Font size | Text below 12px |
 | Touch target | Interactive elements under 24x24px (WCAG 2.2) |
 
-The focus state check is the one existing tools like Stark and Able don't do. They check contrast between two layers you pick by hand — they have no concept of component states, so a button whose focus variant looks exactly like default will never get flagged. That's a silent keyboard navigation failure and it's what this plugin specifically looks for.
+The focus state check is the one existing tools like Stark and Able don't do. They check contrast between two layers you pick by hand, they have no concept of component states, so a button whose focus variant looks exactly like default will never get flagged. That's a silent keyboard navigation failure and it's what this plugin specifically looks for.
 
 ## How to use it
 
 1. Open the plugin in any Figma file that has component sets
-2. Click **Run audit** — it reads the component sets directly, no manual selection or frame-wrapping needed
+2. Click **Run audit**. It reads the component sets directly, no manual selection or frame-wrapping needed
 3. Issues are listed by severity (High / Medium / Low), click any issue to jump straight to that layer in Figma
 4. Optionally click **Generate stakeholder explanations** to get plain-language summaries via Groq (free API key, no credit card)
 5. Export the full list as a `.md` remediation plan to share with your team
