@@ -1,4 +1,3 @@
-the issue is you need to paste the raw markdown syntax not the rendered version. here it is — copy exactly as shown:
 # A11y System Audit
 
 A Figma plugin that scans design system components for WCAG AA accessibility issues while you're still in the file, not after a formal audit months later.
