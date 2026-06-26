@@ -30,7 +30,7 @@ npm run build
 
 In Figma: Plugins > Development > Import plugin from manifest > select manifest.json
 
-For the AI explanation feature, get a free key at console.groq.com and paste it into the Settings panel inside the plugin.
+For the AI explanation feature, get a free key at console.groq.com. Paste it into the Settings panel inside the plugin (click "Settings" near the top to expand it). If that panel doesn't render for any reason, you can also paste the key directly into ui.html, look for the constant PASTE_YOUR_GROQ_KEY_HERE near the top of the script and replace it with your key.
 
 ## Test design system
 
